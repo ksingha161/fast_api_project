@@ -20,8 +20,9 @@ stored_products = [{
     }]
 
 def get_user_id(id):
-    if id in stored_products:
-        return id
+    for i in stored_products:
+        if i['id'] == id:
+            return i
 
 @app.get("/")
 def get_home_page():
@@ -42,6 +43,8 @@ def register_products(product: Model):
 
 @app.get("/products/{id}")
 def get_product(id: int):
-    id = get_user_id()
-    if not id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    product = get_user_id(id)
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+        detail=f"item with id {id} does not exist")
+    return {"item": product}        
