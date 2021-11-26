@@ -4,5 +4,5 @@ from pydantic import BaseModel
 class Model(BaseModel):
     product: str
     price: int
-    review: Optional[int]
+    review: Optional[str]
     purchased: bool = True

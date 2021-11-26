@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status, HTTPException
+from starlette.responses import Response
 from app.contract import Model
 from random import randrange
 
@@ -24,6 +25,11 @@ def get_user_id(id):
         if i['id'] == id:
             return i
 
+def get_index(id):
+    for i, j in enumerate(stored_products):
+        if j['id'] == id:
+            return i
+
 @app.get("/")
 def get_home_page():
     return {"message": "hello"}
@@ -47,4 +53,24 @@ def get_product(id: int):
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
         detail=f"item with id {id} does not exist")
-    return {"item": product}        
+    return {"item": product}
+
+@app.delete("/products/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_product(id: int):
+    index = get_index(id)
+    stored_products.pop(index)
+    if index == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put("/products/{id}")
+def update_product(id: int, product: Model):
+    # find the index of product that user is request
+    index = get_index(id)
+    if index == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    # take all data and convert to python dictionary
+    product_dict = product.dict() 
+    product_dict['id'] = id
+    stored_products[index] = product_dict
+    return {'data': product_dict}
