@@ -2,7 +2,6 @@ from typing import Optional
 from pydantic import BaseModel
 
 class Model(BaseModel):
-    product: str
-    price: int
-    review: Optional[str]
-    purchased: bool = True
+    product_type: str
+    price: float
+    is_purchased: bool
