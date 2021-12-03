@@ -1,8 +1,14 @@
 from fastapi import FastAPI, status, HTTPException
+from fastapi.params import Depends
+from sqlalchemy.orm.session import Session
 from starlette.responses import Response
 from app.contract import Model
 from random import randrange
+import psycopg2
+from . import models
+from .database import engine, get_db
 
+models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 stored_products = [{
@@ -33,6 +39,11 @@ def get_index(id):
 @app.get("/")
 def get_home_page():
     return {"message": "hello"}
+
+@app.get("/sqlalchemy")
+def get_home_page(db: Session = Depends(get_db)):
+    product = db.query(models.Product).all()
+    return {"item": product}
 
 @app.get("/products")
 def get_products():
