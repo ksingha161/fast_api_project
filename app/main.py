@@ -3,7 +3,6 @@ from fastapi.params import Depends
 from sqlalchemy.orm.session import Session
 from starlette.responses import Response
 from app.contract import Model
-from random import randrange
 import psycopg2
 from . import models
 from .database import engine, get_db
@@ -52,4 +51,6 @@ def update_product(id: int, updated_product: Model, db: Session = Depends(get_db
     product = product_query.first()
     if product == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return {'data': product}
+    product_query.update(updated_product.dict(), synchronize_session=False)
+    db.commit()
+    return {'data': product_query.first()}
