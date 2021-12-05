@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/", response_model=UserResponse)
 def create_user(user: UserCreate,db: Session = Depends(get_db)):
-    password = utils.hash_password(user.password)
+    password = utils.hashed_pass(user.password)
     user.password = password
     new_user = models.User(**user.dict())
     db.add(new_user)
