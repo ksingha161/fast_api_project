@@ -3,6 +3,8 @@ from fastapi import status, HTTPException, APIRouter, Response
 from fastapi.params import Depends
 from sqlalchemy.orm import query
 from sqlalchemy.orm.session import Session
+
+from app import oauth2
 from ..schemas import PostProduct, ProductResponse
 import psycopg2
 from .. import models, utils
@@ -16,7 +18,7 @@ def get_products(db: Session = Depends(get_db)):
     return products
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProductResponse)
-def register_products(product: PostProduct, db: Session = Depends(get_db)):
+def register_products(product: PostProduct, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
     new_product = models.Product(product_type= product.product_type, price=product.price, 
     is_purchased=product.is_purchased)
     db.add(new_product)
