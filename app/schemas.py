@@ -1,13 +1,17 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+
+
 class ProductBase(BaseModel):
     product_type: str
     price: float
     is_purchased: bool = False
 
+
 class PostProduct(ProductBase):
     pass
+
 
 class ProductResponse(ProductBase):
     id: int
@@ -16,9 +20,11 @@ class ProductResponse(ProductBase):
     class Config():
         orm_mode = True
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -28,12 +34,15 @@ class UserResponse(BaseModel):
     class Config():
         orm_mode = True
 
+
 class UserLogin(UserCreate):
     pass
+
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+
 
 # this is what user will input
 class TokenData(BaseModel):
